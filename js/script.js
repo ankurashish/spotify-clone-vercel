@@ -6,22 +6,11 @@ let vol = 0.5;
 async function getsongs(folder) {
   currFolder = folder;
   try {
-    let a = await fetch(`${folder}/`);
-    if (!a.ok) throw new Error("Folder not found");
+    let res = await fetch(`${folder}/info.json`);
+    if (!res.ok) throw new Error("info.json not found");
 
-    let response = await a.text();
-    let div = document.createElement("div");
-    div.innerHTML = response;
-
-    let as = div.getElementsByTagName("a");
-    songs = [];
-    for (let index = 0; index < as.length; index++) {
-      const element = as[index];
-      if (element.href.endsWith(".mp3")) {
-        let parts = element.href.split("/");
-        songs.push(parts[parts.length - 1]);
-      }
-    }
+    let data = await res.json();
+    songs = data.songs || [];
 
     let songUL = document.querySelector(".songlist ul");
     songUL.innerHTML = "";
@@ -48,7 +37,7 @@ async function getsongs(folder) {
 
     return songs;
   } catch (err) {
-    console.error("Error fetching songs from folder:", folder);
+    console.error("Error fetching songs from folder:", folder, err);
     return [];
   }
 }
@@ -72,60 +61,64 @@ function formatTime(seconds) {
 }
 
 async function displayAlbums() {
-  let res = await fetch(`songs/`);
-  let text = await res.text();
-  let div = document.createElement("div");
-  div.innerHTML = text;
-
-  let anchors = div.getElementsByTagName("a");
   const cardContainer = document.querySelector(".card-container");
   cardContainer.innerHTML = "";
 
-  Array.from(anchors).forEach(async (e) => {
-    if (e.href.includes("/songs")) {
-      let folder = e.href.split("/").slice(-2)[0].replaceAll("%20", " ");
-      try {
-        let a = await fetch(`songs/${folder}/info.json`);
-        let response = await a.json();
+  // List your known folders here or load dynamically if you want
+  const folders = ["top-hit", "trending"];
 
-        let card = document.createElement("div");
-        card.classList.add("card");
-        card.setAttribute("data-folder", folder);
-        card.innerHTML = `
-          <div class="play">
-            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-              <polygon points="8,5 19,12 8,19" />
-            </svg>
-          </div>
-          <img src="songs/${folder}/${response.image}" alt="" />
-          <img class="cardplay" src="img/cardPlay.svg" alt="">
-          <h2>${response.title}</h2>
-          <p>${response.description}</p>
-        `;
+  for (const folder of folders) {
+    try {
+      let res = await fetch(`songs/${folder}/info.json`);
+      if (!res.ok) throw new Error("info.json not found");
 
-        card.addEventListener("click", async () => {
-          songs = await getsongs(`songs/${folder}`);
-          if (songs.length > 0) {
-            playmusic(songs[0]);
-          }
-          document.querySelector(".left").style.left = "0";
-        });
+      let data = await res.json();
 
-        cardContainer.appendChild(card);
-      } catch (err) {
-        console.error("Missing info.json in folder:", folder);
-      }
+      let card = document.createElement("div");
+      card.classList.add("card");
+      card.setAttribute("data-folder", folder);
+      card.innerHTML = `
+        <div class="play">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <polygon points="8,5 19,12 8,19" />
+          </svg>
+        </div>
+        <img src="songs/${folder}/${data.image}" alt="" />
+        <img class="cardplay" src="img/cardPlay.svg" alt="">
+        <h2>${data.title}</h2>
+        <p>${data.description}</p>
+      `;
+
+      card.addEventListener("click", async () => {
+        songs = await getsongs(`songs/${folder}`);
+        if (songs.length > 0) {
+          playmusic(songs[0]);
+        }
+        document.querySelector(".left").style.left = "0";
+      });
+
+      cardContainer.appendChild(card);
+    } catch (err) {
+      console.error("Error loading album info.json for folder:", folder, err);
     }
-  });
+  }
 }
 
 async function main() {
-  songs = await getsongs("songs/top-hit");
-  if (songs.length === 0) {
-    songs = await getsongs("songs/trending");
+  const defaultFolders = ["top-hit", "trending"];
+
+  let songsLoaded = false;
+  for (const folder of defaultFolders) {
+    songs = await getsongs(`songs/${folder}`);
+    if (songs.length > 0) {
+      playmusic(songs[0], true);
+      songsLoaded = true;
+      break;
+    }
   }
-  if (songs.length > 0) {
-    playmusic(songs[0], true);
+
+  if (!songsLoaded) {
+    console.warn("No songs loaded from default folders.");
   }
 
   displayAlbums();
