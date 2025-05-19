@@ -122,7 +122,7 @@ async function displayAlbums() {
 async function main() {
   songs = await getsongs("songs/top-hit");
   if (songs.length === 0) {
-    songs = await getsongs("songs/romantic");
+    songs = await getsongs("songs/trending");
   }
   if (songs.length > 0) {
     playmusic(songs[0], true);
