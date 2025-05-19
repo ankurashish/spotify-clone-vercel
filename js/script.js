@@ -1,7 +1,7 @@
 let currFolder;
 async function getsongs(folder) {
   currFolder = folder;
-  let a = await fetch(`http://127.0.0.1:3000/spotify%20clone/${folder}/`);
+  let a = await fetch(`${folder}/`);
   let response = await a.text();
   // console.log(response);
   let div = document.createElement("div");
@@ -53,8 +53,8 @@ async function getsongs(folder) {
 }
 
 const playmusic = (track, pause = false) => {
-  // let audio=new Audio("/spotify%20clone/songs/" + track);
-  currentsong.src = `/spotify%20clone/${currFolder}/` + track;
+  // let audio=new Audio("spotify%20clone/songs/" + track);
+  currentsong.src = `${currFolder}/` + track;
   if (!pause) {
     currentsong.play();
     play.src = "img/pause.svg";
@@ -75,7 +75,7 @@ function formatTime(seconds) {
   return `${String(mins).padStart(2, "0")}:${String(secs).padStart(2, "0")}`;
 }
 async function displayAlbums() {
-  let res = await fetch(`http://127.0.0.1:3000/spotify%20clone/songs/`);
+  let res = await fetch(`songs/`);
   let text = await res.text();
   let div = document.createElement("div");
   div.innerHTML = text;
@@ -90,7 +90,7 @@ async function displayAlbums() {
 
       try {
         let a = await fetch(
-          `http://127.0.0.1:3000/spotify%20clone/songs/${folder}/info.json`
+          `songs/${folder}/info.json`
         );
         let response = await a.json();
 
@@ -103,7 +103,7 @@ async function displayAlbums() {
               <polygon points="8,5 19,12 8,19" />
             </svg>
           </div>
-          <img src="/spotify%20clone/songs/${folder}/${response.image}" alt="" />
+          <img src="songs/${folder}/${response.image}" alt="" />
           <img class="cardplay" src="img/cardPlay.svg" alt="">
           <h2>${response.title}</h2>
           <p>${response.description}</p>
