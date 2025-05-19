@@ -136,7 +136,7 @@ async function displayAlbums() {
 
 let songs;
 async function main() {
-  await getsongs("songs/top hit");
+  await getsongs("songs/top-hit");
   // currentsong.src = "/spotify%20clone/songs/" + songs[0];
   playmusic(songs[0], true);
 
