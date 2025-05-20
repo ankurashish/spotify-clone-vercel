@@ -2,6 +2,7 @@
 {
     "title": "Anime Songs",
     "description": "A collection of popular anime cover songs.",
-    "image": "cover.jpg"
+    "image": "cover.jpg",
+    "songs":["A Suzume No Tojimari Nanoka Hara.mp3" ,"Blue Birds.mp3", "Kaikai Kitan.mp3","Your Name Sparkle.mp3"]
     
 }

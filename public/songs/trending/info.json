@@ -2,5 +2,6 @@
 {
     "title": "Top Hits",
     "description": "A collection of popular hits.",
-    "image":"cover.jpg"
+    "image":"cover.jpg",
+    "songs":["Charlie Puth - We Don't Talk Anymore.mp3", "I Really Want To Stay at Your House.mp3","Ma Meilleure Ennemie.mp3", "nature.mp3", "The Line.mp3","The Weeknd - Blinding Lights.mp3"]
 }
