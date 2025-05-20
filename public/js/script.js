@@ -4,11 +4,12 @@ let currentsong = new Audio();
 let vol = 0.5;
 
 function getCurrentSongFileName() {
+  // Extract just the filename from currentsong.src (works with full URLs)
   try {
     let url = new URL(currentsong.src);
-    return url.pathname.split('/').pop();
+    return decodeURIComponent(url.pathname.split('/').pop());
   } catch {
-    return currentsong.src.split("/").slice(-1)[0];
+    return decodeURIComponent(currentsong.src.split("/").pop());
   }
 }
 
@@ -73,7 +74,6 @@ async function displayAlbums() {
   const cardContainer = document.querySelector(".card-container");
   cardContainer.innerHTML = "";
 
-  // Added "hindi" folder here
   const folders = ["top-hit", "trending", "hindi"];
 
   for (const folder of folders) {
@@ -165,17 +165,25 @@ async function main() {
 
   previous.addEventListener("click", () => {
     currentsong.pause();
-    let index = songs.indexOf(getCurrentSongFileName());
+    let currentFile = getCurrentSongFileName();
+    let index = songs.indexOf(currentFile);
     if (index > 0) {
       playmusic(songs[index - 1]);
+    } else {
+      // Optionally restart first song or do nothing
+      playmusic(songs[0]);
     }
   });
 
   next.addEventListener("click", () => {
     currentsong.pause();
-    let index = songs.indexOf(getCurrentSongFileName());
-    if (index < songs.length - 1) {
+    let currentFile = getCurrentSongFileName();
+    let index = songs.indexOf(currentFile);
+    if (index >= 0 && index < songs.length - 1) {
       playmusic(songs[index + 1]);
+    } else {
+      // Optionally do nothing or loop to first song
+      // playmusic(songs[0]);
     }
   });
 
@@ -198,14 +206,15 @@ async function main() {
     }
   });
 
-  // Play next song automatically without looping back
   currentsong.addEventListener("ended", () => {
-    let index = songs.indexOf(getCurrentSongFileName());
-    if (index < songs.length - 1) {
+    let currentFile = getCurrentSongFileName();
+    let index = songs.indexOf(currentFile);
+    if (index >= 0 && index < songs.length - 1) {
       playmusic(songs[index + 1]);
     } else {
-      currentsong.pause();
+      // No next song, stop playback & update UI
       play.src = "img/play.svg";
+      currentsong.pause();
     }
   });
 }
