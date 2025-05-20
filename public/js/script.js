@@ -64,8 +64,8 @@ async function displayAlbums() {
   const cardContainer = document.querySelector(".card-container");
   cardContainer.innerHTML = "";
 
-  // List your known folders here or load dynamically if you want
-  const folders = ["top-hit", "trending"];
+  // Added "hindi" here
+  const folders = ["top-hit", "trending", "hindi"];
 
   for (const folder of folders) {
     try {
@@ -105,7 +105,7 @@ async function displayAlbums() {
 }
 
 async function main() {
-  const defaultFolders = ["top-hit", "trending"];
+  const defaultFolders = ["top-hit", "trending", "hindi"];
 
   let songsLoaded = false;
   for (const folder of defaultFolders) {
@@ -189,11 +189,15 @@ async function main() {
     }
   });
 
-  // Play next song automatically
+  // Play next song automatically without looping back
   currentsong.addEventListener("ended", () => {
     let index = songs.indexOf(currentsong.src.split("/").slice(-1)[0]);
     if (index < songs.length - 1) {
       playmusic(songs[index + 1]);
+    } else {
+      // do nothing when last song ends, or you can pause or reset UI here
+      currentsong.pause();
+      play.src = "img/play.svg";
     }
   });
 }
