@@ -3,6 +3,15 @@ let songs = [];
 let currentsong = new Audio();
 let vol = 0.5;
 
+function getCurrentSongFileName() {
+  try {
+    let url = new URL(currentsong.src);
+    return url.pathname.split('/').pop();
+  } catch {
+    return currentsong.src.split("/").slice(-1)[0];
+  }
+}
+
 async function getsongs(folder) {
   currFolder = folder;
   try {
@@ -64,7 +73,7 @@ async function displayAlbums() {
   const cardContainer = document.querySelector(".card-container");
   cardContainer.innerHTML = "";
 
-  // Added "hindi" here
+  // Added "hindi" folder here
   const folders = ["top-hit", "trending", "hindi"];
 
   for (const folder of folders) {
@@ -156,7 +165,7 @@ async function main() {
 
   previous.addEventListener("click", () => {
     currentsong.pause();
-    let index = songs.indexOf(currentsong.src.split("/").slice(-1)[0]);
+    let index = songs.indexOf(getCurrentSongFileName());
     if (index > 0) {
       playmusic(songs[index - 1]);
     }
@@ -164,7 +173,7 @@ async function main() {
 
   next.addEventListener("click", () => {
     currentsong.pause();
-    let index = songs.indexOf(currentsong.src.split("/").slice(-1)[0]);
+    let index = songs.indexOf(getCurrentSongFileName());
     if (index < songs.length - 1) {
       playmusic(songs[index + 1]);
     }
@@ -191,11 +200,10 @@ async function main() {
 
   // Play next song automatically without looping back
   currentsong.addEventListener("ended", () => {
-    let index = songs.indexOf(currentsong.src.split("/").slice(-1)[0]);
+    let index = songs.indexOf(getCurrentSongFileName());
     if (index < songs.length - 1) {
       playmusic(songs[index + 1]);
     } else {
-      // do nothing when last song ends, or you can pause or reset UI here
       currentsong.pause();
       play.src = "img/play.svg";
     }
