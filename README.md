@@ -9,8 +9,8 @@ A sleek, responsive Spotify clone built with modern web technologies and deploye
 ## 🚀 Tech Stack
 
 - **HTML5** 
-- **CSS** 
-- **Vanilla JavaScript** 
+- **Vanilla CSS** 
+- **JavaScript** 
 - **Vercel** 
 
 
